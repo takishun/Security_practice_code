@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[4]:
+# In[3]:
 
 
 import pandas as pd
@@ -12,6 +12,8 @@ import geoip2.database
 import time as t
 warnings.simplefilter('ignore')
 get_ipython().run_line_magic('matplotlib', 'inline')
+img_dir = 'image/'
+result_dir = 'result/'
 
 class log_analytic_code:
     def __init__(self,fpass,ip_dict):
@@ -27,56 +29,56 @@ class log_analytic_code:
     def make_access_plot(self):
         print('日付　　アクセス数')
         print(self.fpass['ymd'].value_counts().sort_index())
-        self.fpass['ymd'].value_counts().sort_index().to_csv('access_count.csv')
+        self.fpass['ymd'].value_counts().sort_index().to_csv(result_dir + 'access_count.csv')
         plt.clf()
-        self.fpass['ymd'].value_counts().plot(color='orange',figsize=(15,15))
+        self.fpass['ymd'].value_counts().sort_index().plot(color='orange',kind='line',figsize=(10,20))
         plt.xlabel('日付')
         plt.ylabel('アクセス数')
         plt.grid()
-        plt.savefig('access_count.png')
+        plt.savefig(img_dir + 'access_count.png')
     
     def make_ip_count(self,rank_c):
         print('IPアドレス　　アクセス数')
         plt.clf()
-        self.fpass['from_ip_address'].value_counts().sort_values(ascending=False).head(rank_c).plot(kind='bar',figsize=(15,15))
+        self.fpass['from_ip_address'].value_counts().sort_values(ascending=False).head(rank_c).plot(kind='bar',figsize=(10,20))
         self.fpass['from_ip_address'].value_counts().sort_values(ascending=False).to_csv('ip.csv')
         print(self.fpass['from_ip_address'].value_counts().sort_values(ascending=False).head(rank_c))
         plt.ylabel('アクセス数')
         plt.xlabel('ipアドレス')
-        plt.savefig('ip_address_count.png')
+        plt.savefig(img_dir + 'ip_address_count.png')
         
     def make_response_plot(self):
         print('ステータスコード')
         plt.clf()
         self.fpass['status_code'].value_counts().sort_values(ascending=False).to_csv('response_count.csv')
-        self.fpass['status_code'].value_counts().sort_values(ascending=False).plot(kind='bar',figsize=(15,20))
+        self.fpass['status_code'].value_counts().sort_values(ascending=False).plot(kind='bar',figsize=(10,20))
         print(self.fpass['status_code'].value_counts().sort_values(ascending=False))
         plt.ylabel('頻度')
         plt.xlabel('ステータスコード')
-        plt.savefig('status_code.png')
+        plt.savefig(img_dir + 'status_code.png')
         
     def make_url_plot(self,rank_c):
         print('URL')
         plt.clf()
-        self.fpass['url'].value_counts().sort_values(ascending=False).head(rank_c).plot(kind='bar',figsize=(15,20))
-        self.fpass['url'].value_counts().sort_values(ascending=False).to_csv('url.csv')
+        self.fpass['url'].value_counts().sort_values(ascending=False).head(rank_c).plot(kind='bar',figsize=(10,20))
+        self.fpass['url'].value_counts().sort_values(ascending=False).to_csv(result_dir + 'url.csv')
         print(self.fpass['url'].value_counts().sort_values(ascending=False))
         plt.ylabel('頻度')
         plt.xlabel('url')
-        plt.savefig('url.png')
+        plt.savefig(img_dir + 'url.png')
     
     def make_httpres_plot(self):
         print('HTTPレスポンス')
         plt.clf()
-        self.fpass['res'].value_counts().sort_values(ascending=False).plot(kind='bar',figsize=(15,20))
+        self.fpass['res'].value_counts().sort_values(ascending=False).plot(kind='bar',figsize=(10,20))
         print(self.fpass['res'].value_counts().sort_values(ascending=False))
-        self.fpass['res'].value_counts().sort_values(ascending=False).to_csv('HTTPres.csv')
+        self.fpass['res'].value_counts().sort_values(ascending=False).to_csv(result_dir + 'HTTPres.csv')
         plt.ylabel('頻度')
         plt.xlabel('res')
-        plt.savefig('res.png')        
+        plt.savefig(img_dir + 'res.png')        
     
     def save_csv(self):
-        self.fpass.to_csv('log_df.csv',index=False)
+        self.fpass.to_csv(result_dir + 'log_df.csv',index=False)
     
     def mung(self):
         print('process start')
@@ -107,14 +109,14 @@ class log_analytic_code:
         plt.clf()
         self.fpass['country'].value_counts().sort_values(ascending=False).plot(kind='bar',figsize=(15,20))
         print(self.fpass['country'].value_counts().sort_values(ascending=False))
-        self.fpass['country'].value_counts().sort_values(ascending=False).to_csv('country.csv')
+        self.fpass['country'].value_counts().sort_values(ascending=False).to_csv(result_dir + 'country.csv')
         plt.ylabel('頻度')
         plt.xlabel('country code')
-        plt.savefig('country.png')   
+        plt.savefig(img_dir + 'country.png')   
         
 if __name__ == "__main__":
     start = t.time()
-    log_an = log_analytic_code('/Users/takishun/files/log20240430/log.txt','GeoLite2-City.mmdb') 
+    log_an = log_analytic_code('/Users/takishun/files/log20250102/log.txt','GeoLite2-City.mmdb') 
     try: 
         df = log_an.mung()
         log_an.make_access_plot()
@@ -129,7 +131,7 @@ if __name__ == "__main__":
     print('log_process_end: {}[sec]'.format(t.time()-start))
 
 
-# In[6]:
+# In[4]:
 
 
 d = pd.read_csv('log_df.csv')
